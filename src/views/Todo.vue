@@ -8,28 +8,31 @@
                     @focusout="print('i am focusout event')"
                     @input="onInput"> <button @click="add">添加</button>
         </p>
-        <p>
-            {{fullname}}
-        </p>
-        <p>
-            {{todoLength}}
-        </p>
         <div v-for="(v, k) in todos" :key="'todo' + v.id">
-            <template v-if="v.isEdit">
-                <input type="text" v-model="v.content" />
-            </template>
-            <template v-else>
-                {{v.content}}
-            </template>
-            <button @click="del(k)">删除</button>
-            <button @click="edit(k)">编辑</button>
+            <TodoItem :text="v.content" @delItem="del(k)">
+                title
+                <template v-slot:content>
+                    i am content
+                </template>
+            </TodoItem>
+
+<!--            <template v-if="v.isEdit">-->
+<!--                <input type="text" v-model="v.content" />-->
+<!--            </template>-->
+<!--            <template v-else>-->
+<!--                {{v.content}}-->
+<!--            </template>-->
+<!--            <button @click="del(k)">删除</button>-->
+<!--            <button @click="edit(k)">编辑</button>-->
         </div>
     </div>
 </template>
 
 <script>
+    import TodoItem from '../components/TodoItem'
     export default {
         name: "Todo",
+        components: {TodoItem},
         data(){
             return {
                 todos: [],
@@ -47,17 +50,7 @@
               }else{
                   return this.todos.length;
               }
-          },
-            fullname :{
-              get: function () {
-                  return this.firstname + " " + this.secondname
-              },
-                set: function (newVal) {
-                    this.firstname = newVal[0]
-                    this.secondname = newVal[2]
-                    // 对dom进行修改，是不是就达到一个修改变量的同时，就能够去修改dom的节点达到mvvm模型的效果
-                }
-            }
+          }
         },
         created(){
             this.$axios.get('/api/todo/').then(resp => {
@@ -66,14 +59,7 @@
             })
         },
         mounted() {
-            console.log('out of setTimeout', this.firstname)
-            var that = this
-            setTimeout(function () {
-                console.log('in setTimeout',that.firstname)
-                that.fullname = 'c b'
-                console.log(that.firstname)
-                console.log(that.secondname)
-            }, 2000)
+
         },
         methods: {
             onInput(e){
