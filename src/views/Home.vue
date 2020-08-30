@@ -13,6 +13,13 @@ export default {
   name: 'Home',
   components: {
     HelloWorld
+  },
+  created() {
+    this.$axios.get('http://localhost:8089/todo2/').then(resp => {
+      console.log('resp', resp)
+    }).catch(err => {
+      console.error(err)
+    })
   }
 }
 </script>
